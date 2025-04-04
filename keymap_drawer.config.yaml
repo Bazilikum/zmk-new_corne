@@ -124,37 +124,40 @@ parse_config:
     "&ltq 3 TAB":
       tap: $$mdi:keyboard-tab$$
       hold: $$mdi:numeric$$
-    "&ltq 2 SPACE":
+    "&lt_spc 1 SPACE":
       tap: $$mdi:keyboard-space$$
-      hold: $$mdi:symbol$$
-    "&ltq 3 ENTER":
+      hold: $$mdi:navigation-variant$$
+    "&lt_ent 2 ENTER":
       tap: $$mdi:keyboard-return$$
       hold: $$mdi:numeric$$
     "&ltq 1 DELETE":
       tap: $$mdi:backspace-reverse-outline$$
       hold: $$mdi:navigation-variant$$
     # Home rows
-    "&hm LEFT_GUI A":
+    "&hrm_a LCTRL A":
       tap: 'A'
-      shifted: $$mdi:apple-keyboard-command$$
-    "&hm LEFT_ALT S":
+      hold: $$mdi:keyboard-control$$
+    "&hrm_s LALT S":
       tap: 'S'
-      shifted: $$mdi:apple-keyboard-option$$
-    "&hm LEFT_CONTROL D":
+      hold: $$mdi:keyboard-option$$
+    "&hrm_d LGUI D":
       tap: 'D'
-      shifted: $$mdi:apple-keyboard-control$$
-    "&hm LEFT_SHIFT F":
+      hold: $$mdi:keyboard-command$$
+    "&hrm_f LSHFT F":
       tap: 'F'
-      shifted: $$mdi:apple-keyboard-shift$$
-    "&hm RIGHT_SHIFT J":
+      hold: $$mdi:keyboard-shift$$
+    "&hrm_j RSHFT J":
       tap: 'J'
-      shifted: $$mdi:apple-keyboard-shift$$
-    "&hm RIGHT_CONTROL K":
+      hold: $$mdi:keyboard-shift$$
+    "&hrm_k RGUI K":
       tap: 'K'
-      shifted: $$mdi:apple-keyboard-control$$
-    "&hm RIGHT_ALT L":
+      hold: $$mdi:keyboard-command$$
+    "&hrm_l RALT L":
       tap: 'L'
-      shifted: $$mdi:apple-keyboard-option$$
+      hold: $$mdi:keyboard-option$$
+    "&hrm_semi RCTRL SEMI":
+      tap: ';'
+      hold: $$mdi:keyboard-control$$
     # self behaviors
     "&hm LG(LS(V)) P":
       tap: 'P'
