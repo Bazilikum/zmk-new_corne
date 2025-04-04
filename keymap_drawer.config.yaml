@@ -100,11 +100,15 @@ draw_config:
   glyph_tap_size: 18
   glyph_hold_size: 15
   glyph_shifted_size: 15
-  glyphs: {}
+  glyphs:
+    keyboard-command: M292-296V-351H638V-696H121V-751H638V-816H121V-876H638V-1164H694V-876H759V-1169H823V-876H877V-1164H941V-876H1082V-821H941V-751H1082V-696H941V-351H1286V-296H941V-39H877V-296H823V-39H759V-296H694V-39H638V-296H292ZM694-351H759V-696H694V-351ZM823-351H877V-696H823V-351ZM759-751H823V-816H759V-751Z
+    keyboard-control: M261-480H699V-918H261V-480ZM177-262Q153-262 138-277.5Q123-293 123-316V-1083Q123-1106 138-1121.5Q153-1137 177-1137H783Q806-1137 821.5-1121.5Q837-1106 837-1083V-316Q837-293 821.5-277.5Q806-262 783-262H177ZM177-316H783Q783-316 783-316Q783-316 783-316V-1083Q783-1083 783-1083Q783-1083 783-1083H177Q177-1083 177-1083Q177-1083 177-1083V-316Q177-316 177-316Q177-316 177-316ZM177-316Q177-316 177-316Q177-316 177-316V-1083Q177-1083 177-1083Q177-1083 177-1083Q177-1083 177-1083Q177-1083 177-1083V-316Q177-316 177-316Q177-316 177-316Z
+    keyboard-option: M360-480H600V-561H424V-837H600V-918H360V-480ZM123-262Q105-262 92-275Q79-288 79-306V-1093Q79-1111 92-1124Q105-1137 123-1137H837Q855-1137 868-1124Q881-1111 881-1093V-306Q881-288 868-275Q855-262 837-262H123ZM123-306H837Q837-306 837-306Q837-306 837-306V-1093Q837-1093 837-1093Q837-1093 837-1093H123Q123-1093 123-1093Q123-1093 123-1093V-306Q123-306 123-306Q123-306 123-306ZM123-306Q123-306 123-306Q123-306 123-306V-1093Q123-1093 123-1093Q123-1093 123-1093Q123-1093 123-1093Q123-1093 123-1093V-306Q123-306 123-306Q123-306 123-306ZM123-306Q123-306 123-306Q123-306 123-306V-1093Q123-1093 123-1093Q123-1093 123-1093Q123-1093 123-1093Q123-1093 123-1093V-306Q123-306 123-306Q123-306 123-306Z
+    keyboard-shift: M480-480L306-654H419V-918H541V-654H654L480-480ZM177-262Q153-262 138-277.5Q123-293 123-316V-1083Q123-1106 138-1121.5Q153-1137 177-1137H783Q806-1137 821.5-1121.5Q837-1106 837-1083V-316Q837-293 821.5-277.5Q806-262 783-262H177ZM177-316H783Q783-316 783-316Q783-316 783-316V-1083Q783-1083 783-1083Q783-1083 783-1083H177Q177-1083 177-1083Q177-1083 177-1083V-316Q177-316 177-316Q177-316 177-316ZM177-316Q177-316 177-316Q177-316 177-316V-1083Q177-1083 177-1083Q177-1083 177-1083Q177-1083 177-1083Q177-1083 177-1083V-316Q177-316 177-316Q177-316 177-316Z
   glyph_urls:
     tabler: https://unpkg.com/@tabler/icons/icons/outline/{}.svg
     tablerf: https://unpkg.com/@tabler/icons/icons/filled/{}.svg
-    mdi: https://raw.githubusercontent.com/Templarian/MaterialDesign-SVG/master/svg/{}.svg
+    mdi: https://raw.githubusercontent.com/Pictogrammers/MaterialDesignIcons/master/svg/{}.svg
     mdil: https://raw.githubusercontent.com/Pictogrammers/MaterialDesignLight/master/svg/{}.svg
     material: https://fonts.gstatic.com/s/i/short-term/release/materialsymbolsoutlined/{}/default/48px.svg
   use_local_cache: true
@@ -136,28 +140,28 @@ parse_config:
     # Home rows
     "&hrm_a LCTRL A":
       tap: 'A'
-      hold: $$mdi:keyboard-control$$
+      hold: 'CTRL'
     "&hrm_s LALT S":
       tap: 'S'
-      hold: $$mdi:keyboard-option$$
+      hold: 'ALT'
     "&hrm_d LGUI D":
       tap: 'D'
-      hold: $$mdi:keyboard-command$$
+      hold: 'GUI'
     "&hrm_f LSHFT F":
       tap: 'F'
-      hold: $$mdi:keyboard-shift$$
+      hold: 'SHIFT'
     "&hrm_j RSHFT J":
       tap: 'J'
-      hold: $$mdi:keyboard-shift$$
+      hold: 'SHIFT'
     "&hrm_k RGUI K":
       tap: 'K'
-      hold: $$mdi:keyboard-command$$
+      hold: 'GUI'
     "&hrm_l RALT L":
       tap: 'L'
-      hold: $$mdi:keyboard-option$$
+      hold: 'ALT'
     "&hrm_semi RCTRL SEMI":
       tap: ';'
-      hold: $$mdi:keyboard-control$$
+      hold: 'CTRL'
     # self behaviors
     "&hm LG(LS(V)) P":
       tap: 'P'
