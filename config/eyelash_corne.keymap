@@ -30,14 +30,9 @@
 
 / {
     behaviors {
-        td0: td0 {
-            compatible = "zmk,behavior-tap-dance";
-            display-name = "Shift/Caps Lock Tap Dance";
-            #binding-cells = <0>;
-            bindings = <&kp LEFT_SHIFT>, <&kp CAPS>;
-        };
-
-        // Home row mods behavior definitions
+        // Eyelash Corne positions (48 total): row0=0-12, row1=13-27, row2=28-41, thumbs=42-47.
+        // Left HRMs (a,s,d,f) only fire when paired with a RIGHT-hand finger key.
+        // Right HRMs (j,k,l,;) only fire when paired with a LEFT-hand finger key.
         hrm_a: homerow_mod_left_ctrl_a {
             compatible = "zmk,behavior-hold-tap";
             #binding-cells = <2>;
@@ -46,7 +41,7 @@
             quick-tap-ms = <150>;
             require-prior-idle-ms = <100>;
             bindings = <&kp>, <&kp>;
-            hold-trigger-key-positions = <6 7 8 9 10 11 18 19 20 21 22 23 30 31 32 33 34 35>;
+            hold-trigger-key-positions = <7 8 9 10 11 12 22 23 24 25 26 27 36 37 38 39 40 41>;
             hold-trigger-on-release;
         };
 
@@ -58,7 +53,7 @@
             quick-tap-ms = <150>;
             require-prior-idle-ms = <100>;
             bindings = <&kp>, <&kp>;
-            hold-trigger-key-positions = <6 7 8 9 10 11 18 19 20 21 22 23 30 31 32 33 34 35>;
+            hold-trigger-key-positions = <7 8 9 10 11 12 22 23 24 25 26 27 36 37 38 39 40 41>;
             hold-trigger-on-release;
         };
 
@@ -70,7 +65,7 @@
             quick-tap-ms = <150>;
             require-prior-idle-ms = <100>;
             bindings = <&kp>, <&kp>;
-            hold-trigger-key-positions = <6 7 8 9 10 11 18 19 20 21 22 23 30 31 32 33 34 35>;
+            hold-trigger-key-positions = <7 8 9 10 11 12 22 23 24 25 26 27 36 37 38 39 40 41>;
             hold-trigger-on-release;
         };
 
@@ -82,7 +77,7 @@
             quick-tap-ms = <150>;
             require-prior-idle-ms = <100>;
             bindings = <&kp>, <&kp>;
-            hold-trigger-key-positions = <6 7 8 9 10 11 18 19 20 21 22 23 30 31 32 33 34 35>;
+            hold-trigger-key-positions = <7 8 9 10 11 12 22 23 24 25 26 27 36 37 38 39 40 41>;
             hold-trigger-on-release;
         };
 
@@ -94,7 +89,7 @@
             quick-tap-ms = <150>;
             require-prior-idle-ms = <100>;
             bindings = <&kp>, <&kp>;
-            hold-trigger-key-positions = <0 1 2 3 4 5 12 13 14 15 16 17 24 25 26 27 28 29>;
+            hold-trigger-key-positions = <0 1 2 3 4 5 13 14 15 16 17 18 28 29 30 31 32 33>;
             hold-trigger-on-release;
         };
 
@@ -106,7 +101,7 @@
             quick-tap-ms = <150>;
             require-prior-idle-ms = <100>;
             bindings = <&kp>, <&kp>;
-            hold-trigger-key-positions = <0 1 2 3 4 5 12 13 14 15 16 17 24 25 26 27 28 29>;
+            hold-trigger-key-positions = <0 1 2 3 4 5 13 14 15 16 17 18 28 29 30 31 32 33>;
             hold-trigger-on-release;
         };
 
@@ -118,7 +113,7 @@
             quick-tap-ms = <150>;
             require-prior-idle-ms = <100>;
             bindings = <&kp>, <&kp>;
-            hold-trigger-key-positions = <0 1 2 3 4 5 12 13 14 15 16 17 24 25 26 27 28 29>;
+            hold-trigger-key-positions = <0 1 2 3 4 5 13 14 15 16 17 18 28 29 30 31 32 33>;
             hold-trigger-on-release;
         };
 
@@ -130,7 +125,7 @@
             quick-tap-ms = <150>;
             require-prior-idle-ms = <100>;
             bindings = <&kp>, <&kp>;
-            hold-trigger-key-positions = <0 1 2 3 4 5 12 13 14 15 16 17 24 25 26 27 28 29>;
+            hold-trigger-key-positions = <0 1 2 3 4 5 13 14 15 16 17 18 28 29 30 31 32 33>;
             hold-trigger-on-release;
         };
 
@@ -158,13 +153,13 @@
         compatible = "zmk,combos";
         combo_fn1 {
             timeout-ms = <50>;
-            key-positions = <39 40>; // Left shift + left GUI (thumb keys)
+            key-positions = <42 43>; // LSHFT + LGUI (left outer thumbs)
             bindings = <&mo 3>;
         };
-        
+
         combo_fn2 {
             timeout-ms = <50>;
-            key-positions = <41 42>; // Right enter + tab (thumb keys)
+            key-positions = <46 47>; // TAB + BSPC (right outer thumbs)
             bindings = <&mo 4>;
         };
     };
@@ -202,7 +197,7 @@
 &trans  &trans  &trans  &trans  &trans  &trans                                    &mmv MOVE_UP                     &trans  &trans  &trans  &trans  &trans  &trans
 &trans  &trans  &trans  &trans  &trans  &trans                           &mmv MOVE_LEFT  &mkp LCLK       &mmv MOVE_RIGHT  &kp LEFT  &kp DOWN  &kp UP  &kp RIGHT  &kp TAB  &trans
 &trans  &trans  &trans  &trans  &trans  &trans  &trans                             &mmv MOVE_DOWN                   &trans  &trans  &trans  &trans  &trans  &trans
-                        &trans  &trans  &trans                                                                      &trans  &trans  &kp BSPC
+                        &trans  &trans  &trans                                                                      &kp TAB  &trans  &kp BSPC
             >;
             sensor-bindings = <&scroll_encoder>;
         };
@@ -213,7 +208,7 @@
 &trans  &trans  &trans  &trans  &trans  &trans                                    &mmv MOVE_UP                     &trans  &kp N7  &kp N8  &kp N9  &kp MINUS  &kp BSPC
 &trans  &trans  &trans  &trans  &trans  &trans                           &mmv MOVE_LEFT  &mkp LCLK       &mmv MOVE_RIGHT  &trans  &kp N4  &kp N5  &kp N6  &kp N0  &kp EQUAL
 &trans  &trans  &trans  &trans  &trans  &trans  &trans                             &mmv MOVE_DOWN                   &trans  &kp N1  &kp N2  &kp N3  &kp DOT  &kp ENTER
-                        &trans  &trans  &trans                                                                      &trans  &trans  &kp BSPC
+                        &trans  &trans  &kp TAB                                                                     &trans  &trans  &kp BSPC
             >;
             sensor-bindings = <&scroll_encoder>;
         };

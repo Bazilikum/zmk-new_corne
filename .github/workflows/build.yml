@@ -4,6 +4,11 @@ on:
   push:
     paths-ignore:
       - "keymap-drawer/**"
+      - "qmk.json"
+      - "keyboards/**"
+      - "users/**"
+      - "layouts/**"
+      - ".github/workflows/qmk-build.yml"
 
 jobs:
   build:

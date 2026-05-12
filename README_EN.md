@@ -1,6 +1,21 @@
 - [Chinese](README.md)
 - [English](README_EN.md)
 
+# Personal Keyboard Configs
+
+This repo holds two keyboards' firmware sources side-by-side:
+
+| Keyboard | Firmware | Build trigger | Source paths |
+|---|---|---|---|
+| Eyelash Corne | ZMK | `.github/workflows/build.yml` | `config/`, `boards/`, `build.yaml` |
+| Keychron Q11 (ANSI encoder) | QMK userspace | `.github/workflows/qmk-build.yml` | `qmk.json`, `keyboards/keychron/q11/` |
+
+Each workflow ignores the other's paths, so a Corne keymap edit doesn't re-run the Q11 build and vice versa.
+
+**Q11 firmware is built with `VIA_ENABLE = yes`**, so after the first flash any further keymap edits can be done live via https://launcher.keychron.com — no recompile needed.
+
+---
+
 # 睫毛外设 (Eyelash Peripherals) Corne ZMK Repository
 
 **This keyboard is not the same as [foostan's Corne](https://github.com/foostan/crkbd). It will not work with standard `corne` firmware.**
