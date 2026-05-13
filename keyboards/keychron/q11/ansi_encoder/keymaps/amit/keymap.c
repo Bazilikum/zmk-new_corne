@@ -43,6 +43,12 @@ enum layers{
 #define LT_SPC LT(NAV, KC_SPC)
 #define LT_ENT LT(NUM, KC_ENT)
 
+// Homerow.app triggers — match these to the shortcuts set in Homerow prefs.
+// Hyper combos (Ctrl+Alt+Cmd+<key>) are unlikely to clash with anything.
+#define HR_CLK LCAG(KC_J)  // Click   -- label every clickable element
+#define HR_SCR LCAG(KC_K)  // Scroll  -- keyboard-driven scrolling
+#define HR_SRC LCAG(KC_L)  // Search  -- click by visible text
+
 // CHORDAL_HOLD: which physical hand each key belongs to.
 // HRMs only trigger their hold when chorded with an opposite-hand key.
 // Thumbs and Fn keys are '*' so they chord with both hands — otherwise
@@ -90,11 +96,12 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
         _______,  _______,  _______,  _______,  _______,            _______,                       _______,            _______,  _______,    _______,  _______,  _______,  _______),
 
     // hold LEFT space → mouse + arrow nav on right hand
+    // Q/W/E = Homerow click/scroll/search.
     // Z = slow precision (MS_ACL0), C = fast jumps (MS_ACL2). Hold while moving.
     [NAV] = LAYOUT_91_ansi(
         _______,  _______,  _______,  _______,  _______,  _______,  _______,   _______,  _______,  _______,  _______,  _______,  _______,    _______,  _______,  _______,  _______,
         _______,  _______,  _______,  _______,  _______,  _______,  _______,   _______,  _______,  _______,  _______,  _______,  _______,    _______,  _______,            _______,
-        _______,  _______,  _______,  _______,  _______,  _______,  _______,   MS_BTN1,  MS_BTN3,  MS_BTN2,  MS_WHLU,  MS_WHLD,  _______,    _______,  _______,            _______,
+        _______,  _______,  HR_CLK,   HR_SCR,   HR_SRC,   _______,  _______,   MS_BTN1,  MS_BTN3,  MS_BTN2,  MS_WHLU,  MS_WHLD,  _______,    _______,  _______,            _______,
         _______,  _______,  _______,  _______,  _______,  _______,  _______,   KC_LEFT,  KC_DOWN,  KC_UP,    KC_RGHT,  KC_TAB,   _______,              _______,            _______,
         _______,  _______,            MS_ACL0,  _______,  MS_ACL2,  _______,   _______,  MS_LEFT,  MS_DOWN,  MS_UP,    MS_RGHT,  _______,              _______,  _______,
         _______,  _______,  _______,  _______,  _______,            _______,                       KC_TAB,             _______,  _______,    _______,  _______,  _______,  _______),
