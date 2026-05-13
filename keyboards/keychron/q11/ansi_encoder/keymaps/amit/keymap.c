@@ -45,14 +45,15 @@ enum layers{
 
 // CHORDAL_HOLD: which physical hand each key belongs to.
 // HRMs only trigger their hold when chorded with an opposite-hand key.
-// Knobs, thumbs, and arrow cluster are marked by their physical side.
+// Thumbs and Fn keys are '*' so they chord with both hands — otherwise
+// rolling thumb -> same-hand finger fast would suppress layer activation.
 const char chordal_hold_layout[MATRIX_ROWS][MATRIX_COLS] PROGMEM = LAYOUT_91_ansi(
     'L', 'L', 'L', 'L', 'L', 'L', 'L',   'R', 'R', 'R', 'R', 'R', 'R', 'R', 'R', 'R', 'R',
     'L', 'L', 'L', 'L', 'L', 'L', 'L',   'R', 'R', 'R', 'R', 'R', 'R', 'R', 'R',      'R',
     'L', 'L', 'L', 'L', 'L', 'L', 'L',   'R', 'R', 'R', 'R', 'R', 'R', 'R', 'R',      'R',
     'L', 'L', 'L', 'L', 'L', 'L', 'L',   'R', 'R', 'R', 'R', 'R', 'R',                'R',           'R',
     'L', 'L',      'L', 'L', 'L', 'L',   'R', 'R', 'R', 'R', 'R', 'R',                'R',  'R',
-    'L', 'L', 'L', 'L', 'L',      'L',         'R',                  'R', 'R', 'R', 'R', 'R', 'R'
+    'L', 'L', 'L', 'L', '*',      '*',         '*',                  'R', '*', 'R', 'R', 'R', 'R'
 );
 
 const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
@@ -89,12 +90,13 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
         _______,  _______,  _______,  _______,  _______,            _______,                       _______,            _______,  _______,    _______,  _______,  _______,  _______),
 
     // hold LEFT space → mouse + arrow nav on right hand
+    // Z = slow precision (MS_ACL0), C = fast jumps (MS_ACL2). Hold while moving.
     [NAV] = LAYOUT_91_ansi(
         _______,  _______,  _______,  _______,  _______,  _______,  _______,   _______,  _______,  _______,  _______,  _______,  _______,    _______,  _______,  _______,  _______,
         _______,  _______,  _______,  _______,  _______,  _______,  _______,   _______,  _______,  _______,  _______,  _______,  _______,    _______,  _______,            _______,
         _______,  _______,  _______,  _______,  _______,  _______,  _______,   MS_BTN1,  MS_BTN3,  MS_BTN2,  MS_WHLU,  MS_WHLD,  _______,    _______,  _______,            _______,
         _______,  _______,  _______,  _______,  _______,  _______,  _______,   KC_LEFT,  KC_DOWN,  KC_UP,    KC_RGHT,  KC_TAB,   _______,              _______,            _______,
-        _______,  _______,            _______,  _______,  _______,  _______,   _______,  MS_LEFT,  MS_DOWN,  MS_UP,    MS_RGHT,  _______,              _______,  _______,
+        _______,  _______,            MS_ACL0,  _______,  MS_ACL2,  _______,   _______,  MS_LEFT,  MS_DOWN,  MS_UP,    MS_RGHT,  _______,              _______,  _______,
         _______,  _______,  _______,  _______,  _______,            _______,                       KC_TAB,             _______,  _______,    _______,  _______,  _______,  _______),
 
     // hold RIGHT space → numpad on right hand

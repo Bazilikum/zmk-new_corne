@@ -14,3 +14,15 @@
 #define PERMISSIVE_HOLD
 
 #define COMBO_TERM 30
+
+// Mouse keys: snappy ramp, no startup delay.
+// Acceleration is on by default; MS_ACL0 / MS_ACL2 override to a fixed
+// slow/fast speed while held (bound to Z and C on the NAV layer).
+#define MOUSEKEY_DELAY 0
+#define MOUSEKEY_INTERVAL 16
+#define MOUSEKEY_MAX_SPEED 7
+#define MOUSEKEY_TIME_TO_MAX 60
+#define MOUSEKEY_WHEEL_DELAY 0
+#define MOUSEKEY_WHEEL_INTERVAL 80
+#define MOUSEKEY_WHEEL_MAX_SPEED 8
+#define MOUSEKEY_WHEEL_TIME_TO_MAX 40
