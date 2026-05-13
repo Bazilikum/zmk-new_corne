@@ -148,12 +148,16 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
         _______,  _______,            _______,  _______,  _______,  _______,   _______,  NK_TOGG,  _______,  _______,  _______,  _______,              _______,  _______,
         _______,  _______,  _______,  _______,  _______,            _______,                       _______,            _______,  _______,    _______,  _______,  _______,  _______),
 
-    // hold LEFT space → mouse + arrow nav on right hand
-    // Q/W/E = Homerow click/scroll/search.
-    // Z = slow precision (MS_ACL0), C = fast jumps (MS_ACL2). Hold while moving.
+    // hold LEFT space → nav + mouse + Homerow
+    // Number row 1-5: macOS space/window navigation
+    // Q/W/E: Homerow click/scroll/search
+    // YUIOP: mouse buttons + scroll wheel
+    // HJKL: arrow keys
+    // Z/C: MS_ACL0 (precision) / MS_ACL2 (jump fast)
+    // NM,.: mouse movement
     [NAV] = LAYOUT_91_ansi(
         _______,  _______,  _______,  _______,  _______,  _______,  _______,   _______,  _______,  _______,  _______,  _______,  _______,    _______,  _______,  _______,  _______,
-        _______,  _______,  _______,  _______,  _______,  _______,  _______,   _______,  _______,  _______,  _______,  _______,  _______,    _______,  _______,            _______,
+        _______,  _______,  LCTL(KC_LEFT), LCTL(KC_RIGHT), LCTL(KC_UP), LCTL(KC_DOWN), LGUI(KC_GRV),   _______,  _______,  _______,  _______,  _______,  _______,    _______,  _______,            _______,
         _______,  _______,  HR_CLK,   HR_SCR,   HR_SRC,   _______,  _______,   MS_BTN1,  MS_BTN3,  MS_BTN2,  MS_WHLU,  MS_WHLD,  _______,    _______,  _______,            _______,
         _______,  _______,  _______,  _______,  _______,  _______,  _______,   KC_LEFT,  KC_DOWN,  KC_UP,    KC_RGHT,  KC_TAB,   _______,              _______,            _______,
         _______,  _______,            MS_ACL0,  _______,  MS_ACL2,  _______,   _______,  MS_LEFT,  MS_DOWN,  MS_UP,    MS_RGHT,  _______,              _______,  _______,
