@@ -197,40 +197,124 @@ uint16_t get_quick_tap_term(uint16_t keycode, keyrecord_t *record) {
     }
 }
 
-// Dynamic RGB: SPLASH while typing, restore user's chosen pattern when idle.
-// The "idle" mode is whatever the user has set live in VIA / Keychron Launcher
-// -- this code only captures it at the moment typing starts and restores it
-// after RGB_IDLE_RESTORE_MS of inactivity.
-static uint8_t  rgb_saved_mode  = 0xFF;   // 0xFF means "nothing captured yet"
-static uint32_t rgb_last_key_ms = 0;
+// Custom keycodes fired by the Fn-layer encoders for cycling RGB patterns.
+enum custom_keycodes {
+    IDLE_PREV = SAFE_RANGE,
+    IDLE_NEXT,
+    ACTIVE_PREV,
+    ACTIVE_NEXT,
+};
+
+// Idle (non-reactive) animations -- cycled by LEFT knob while Fn is held.
+static const uint8_t idle_modes[] = {
+    RGB_MATRIX_BREATHING,
+    RGB_MATRIX_CYCLE_ALL,
+    RGB_MATRIX_CYCLE_LEFT_RIGHT,
+    RGB_MATRIX_CYCLE_UP_DOWN,
+    RGB_MATRIX_RAINBOW_MOVING_CHEVRON,
+    RGB_MATRIX_CYCLE_OUT_IN,
+    RGB_MATRIX_CYCLE_OUT_IN_DUAL,
+    RGB_MATRIX_CYCLE_PINWHEEL,
+    RGB_MATRIX_CYCLE_SPIRAL,
+    RGB_MATRIX_DUAL_BEACON,
+    RGB_MATRIX_RAINBOW_BEACON,
+    RGB_MATRIX_JELLYBEAN_RAINDROPS,
+    RGB_MATRIX_PIXEL_RAIN,
+    RGB_MATRIX_DIGITAL_RAIN,
+    RGB_MATRIX_BAND_SPIRAL_VAL,
+};
+#define NUM_IDLE_MODES (sizeof(idle_modes) / sizeof(idle_modes[0]))
+
+// Reactive (key-press) animations -- cycled by RIGHT knob while Fn is held.
+static const uint8_t reactive_modes[] = {
+    RGB_MATRIX_SPLASH,
+    RGB_MATRIX_SOLID_SPLASH,
+    RGB_MATRIX_SOLID_REACTIVE_SIMPLE,
+    RGB_MATRIX_SOLID_REACTIVE_MULTIWIDE,
+    RGB_MATRIX_SOLID_REACTIVE_MULTINEXUS,
+    RGB_MATRIX_TYPING_HEATMAP,
+};
+#define NUM_REACTIVE_MODES (sizeof(reactive_modes) / sizeof(reactive_modes[0]))
+
+// Persist chosen indices in user EEPROM so they survive reboots.
+typedef union {
+    uint32_t raw;
+    struct {
+        uint8_t idle_idx;
+        uint8_t active_idx;
+    };
+} user_eecfg_t;
+
+static user_eecfg_t user_eecfg;
+static bool        rgb_is_reactive = false;
+static uint32_t    rgb_last_key_ms = 0;
+
+void eeconfig_init_user(void) {
+    user_eecfg.raw = 0;
+    eeconfig_update_user(user_eecfg.raw);
+}
+
+void keyboard_post_init_user(void) {
+    user_eecfg.raw = eeconfig_read_user();
+    if (user_eecfg.idle_idx   >= NUM_IDLE_MODES)     user_eecfg.idle_idx = 0;
+    if (user_eecfg.active_idx >= NUM_REACTIVE_MODES) user_eecfg.active_idx = 0;
+    rgb_matrix_mode_noeeprom(idle_modes[user_eecfg.idle_idx]);
+}
 
 bool process_record_user(uint16_t keycode, keyrecord_t *record) {
-    if (record->event.pressed) {
-        rgb_last_key_ms = timer_read32();
-        if (rgb_saved_mode == 0xFF) {
-            uint8_t cur = rgb_matrix_get_mode();
-            if (cur != RGB_MATRIX_SPLASH) {
-                rgb_saved_mode = cur;
-                rgb_matrix_mode_noeeprom(RGB_MATRIX_SPLASH);
-            }
-        }
+    if (!record->event.pressed) return true;
+
+    switch (keycode) {
+        case IDLE_NEXT:
+            user_eecfg.idle_idx = (user_eecfg.idle_idx + 1) % NUM_IDLE_MODES;
+            eeconfig_update_user(user_eecfg.raw);
+            rgb_matrix_mode_noeeprom(idle_modes[user_eecfg.idle_idx]);
+            rgb_is_reactive = false;
+            return false;
+        case IDLE_PREV:
+            user_eecfg.idle_idx = (user_eecfg.idle_idx + NUM_IDLE_MODES - 1) % NUM_IDLE_MODES;
+            eeconfig_update_user(user_eecfg.raw);
+            rgb_matrix_mode_noeeprom(idle_modes[user_eecfg.idle_idx]);
+            rgb_is_reactive = false;
+            return false;
+        case ACTIVE_NEXT:
+            user_eecfg.active_idx = (user_eecfg.active_idx + 1) % NUM_REACTIVE_MODES;
+            eeconfig_update_user(user_eecfg.raw);
+            rgb_matrix_mode_noeeprom(reactive_modes[user_eecfg.active_idx]);
+            rgb_is_reactive = true;
+            rgb_last_key_ms = timer_read32();
+            return false;
+        case ACTIVE_PREV:
+            user_eecfg.active_idx = (user_eecfg.active_idx + NUM_REACTIVE_MODES - 1) % NUM_REACTIVE_MODES;
+            eeconfig_update_user(user_eecfg.raw);
+            rgb_matrix_mode_noeeprom(reactive_modes[user_eecfg.active_idx]);
+            rgb_is_reactive = true;
+            rgb_last_key_ms = timer_read32();
+            return false;
+    }
+
+    // Regular key -> switch to reactive mode, refresh timer.
+    rgb_last_key_ms = timer_read32();
+    if (!rgb_is_reactive) {
+        rgb_matrix_mode_noeeprom(reactive_modes[user_eecfg.active_idx]);
+        rgb_is_reactive = true;
     }
     return true;
 }
 
 void housekeeping_task_user(void) {
-    if (rgb_saved_mode != 0xFF && timer_elapsed32(rgb_last_key_ms) > RGB_IDLE_RESTORE_MS) {
-        rgb_matrix_mode_noeeprom(rgb_saved_mode);
-        rgb_saved_mode = 0xFF;
+    if (rgb_is_reactive && timer_elapsed32(rgb_last_key_ms) > RGB_IDLE_RESTORE_MS) {
+        rgb_matrix_mode_noeeprom(idle_modes[user_eecfg.idle_idx]);
+        rgb_is_reactive = false;
     }
 }
 
 #if defined(ENCODER_MAP_ENABLE)
 const uint16_t PROGMEM encoder_map[][NUM_ENCODERS][NUM_DIRECTIONS] = {
     [MAC_BASE] = { ENCODER_CCW_CW(KC_VOLD, KC_VOLU), ENCODER_CCW_CW(KC_VOLD, KC_VOLU) },
-    [MAC_FN]   = { ENCODER_CCW_CW(RM_VALD, RM_VALU), ENCODER_CCW_CW(RM_VALD, RM_VALU) },
+    [MAC_FN]   = { ENCODER_CCW_CW(IDLE_PREV, IDLE_NEXT), ENCODER_CCW_CW(ACTIVE_PREV, ACTIVE_NEXT) },
     [WIN_BASE] = { ENCODER_CCW_CW(KC_VOLD, KC_VOLU), ENCODER_CCW_CW(KC_VOLD, KC_VOLU) },
-    [WIN_FN]   = { ENCODER_CCW_CW(RM_VALD, RM_VALU), ENCODER_CCW_CW(RM_VALD, RM_VALU) },
+    [WIN_FN]   = { ENCODER_CCW_CW(IDLE_PREV, IDLE_NEXT), ENCODER_CCW_CW(ACTIVE_PREV, ACTIVE_NEXT) },
     [NAV]      = { ENCODER_CCW_CW(MS_WHLD, MS_WHLU), ENCODER_CCW_CW(MS_WHLD, MS_WHLU) },
     [NUM]      = { ENCODER_CCW_CW(KC_VOLD, KC_VOLU), ENCODER_CCW_CW(KC_VOLD, KC_VOLU) },
 };
