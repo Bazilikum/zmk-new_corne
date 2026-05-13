@@ -49,6 +49,59 @@ enum layers{
 #define HR_SCR LCAG(KC_K)  // Scroll  -- keyboard-driven scrolling
 #define HR_SRC LCAG(KC_L)  // Search  -- click by visible text
 
+// Tap-dance on left space:
+//   single tap  -> SPACE
+//   hold        -> NAV layer
+//   double tap  -> Homerow Click (HR_CLK)
+// The single-tap fires immediately if interrupted by the next key press,
+// so mid-sentence typing is not delayed; only an isolated space at the
+// end of a burst waits ~tapping_term.
+enum custom_tap_dances {
+    TD_SPC_HR,
+};
+
+typedef enum {
+    TD_NONE,
+    TD_SINGLE_TAP,
+    TD_SINGLE_HOLD,
+    TD_DOUBLE_TAP,
+} td_state_t;
+
+static td_state_t td_spc_state = TD_NONE;
+
+static td_state_t spc_cur_dance(tap_dance_state_t *state) {
+    if (state->count == 1) {
+        return (state->interrupted || !state->pressed) ? TD_SINGLE_TAP : TD_SINGLE_HOLD;
+    }
+    if (state->count >= 2) return TD_DOUBLE_TAP;
+    return TD_NONE;
+}
+
+static void td_spc_finished(tap_dance_state_t *state, void *user_data) {
+    td_spc_state = spc_cur_dance(state);
+    switch (td_spc_state) {
+        case TD_SINGLE_TAP:  tap_code(KC_SPC); break;
+        case TD_SINGLE_HOLD: layer_on(NAV); break;
+        case TD_DOUBLE_TAP:
+            register_code(KC_LCTL); register_code(KC_LALT); register_code(KC_LGUI);
+            tap_code(KC_J);
+            unregister_code(KC_LGUI); unregister_code(KC_LALT); unregister_code(KC_LCTL);
+            break;
+        default: break;
+    }
+}
+
+static void td_spc_reset(tap_dance_state_t *state, void *user_data) {
+    if (td_spc_state == TD_SINGLE_HOLD) layer_off(NAV);
+    td_spc_state = TD_NONE;
+}
+
+tap_dance_action_t tap_dance_actions[] = {
+    [TD_SPC_HR] = ACTION_TAP_DANCE_FN_ADVANCED(NULL, td_spc_finished, td_spc_reset),
+};
+
+#define TD_SPC TD(TD_SPC_HR)
+
 // CHORDAL_HOLD: which physical hand each key belongs to.
 // HRMs only trigger their hold when chorded with an opposite-hand key.
 // Thumbs and Fn keys are '*' so they chord with both hands — otherwise
@@ -69,7 +122,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
         _______,  KC_TAB,   KC_Q,     KC_W,     KC_E,     KC_R,     KC_T,      KC_Y,     KC_U,     KC_I,     KC_O,     KC_P,     KC_LBRC,    KC_RBRC,  KC_BSLS,            KC_PGDN,
         _______,  KC_ESC,   HM_A,     HM_S,     HM_D,     HM_F,     KC_G,      KC_H,     HM_J,     HM_K,     HM_L,     HM_SCLN,  KC_QUOT,              KC_ENT,             KC_HOME,
         _______,  KC_LSFT,            KC_Z,     KC_X,     KC_C,     KC_V,      KC_B,     KC_N,     KC_M,     KC_COMM,  KC_DOT,   KC_SLSH,              KC_RSFT,  KC_UP,
-        _______,  KC_LCTL,  KC_LOPT,  KC_LCMD,  MO(MAC_FN),         LT_SPC,                        LT_ENT,             KC_RCMD,  MO(MAC_FN), KC_RCTL,  KC_LEFT,  KC_DOWN,  KC_RGHT),
+        _______,  KC_LCTL,  KC_LOPT,  KC_LCMD,  MO(MAC_FN),         TD_SPC,                        LT_ENT,             KC_RCMD,  MO(MAC_FN), KC_RCTL,  KC_LEFT,  KC_DOWN,  KC_RGHT),
 
     [MAC_FN] = LAYOUT_91_ansi(
         RM_TOGG,  _______,  KC_F1,    KC_F2,    KC_F3,    KC_F4,    KC_F5,     KC_F6,    KC_F7,    KC_F8,    KC_F9,    KC_F10,   KC_F11,     KC_F12,   _______,  _______,  RM_TOGG,
@@ -85,7 +138,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
         _______,  KC_TAB,   KC_Q,     KC_W,     KC_E,     KC_R,     KC_T,      KC_Y,     KC_U,     KC_I,     KC_O,     KC_P,     KC_LBRC,    KC_RBRC,  KC_BSLS,            KC_PGDN,
         _______,  KC_ESC,   HM_A,     HM_S,     HM_D,     HM_F,     KC_G,      KC_H,     HM_J,     HM_K,     HM_L,     HM_SCLN,  KC_QUOT,              KC_ENT,             KC_HOME,
         _______,  KC_LSFT,            KC_Z,     KC_X,     KC_C,     KC_V,      KC_B,     KC_N,     KC_M,     KC_COMM,  KC_DOT,   KC_SLSH,              KC_RSFT,  KC_UP,
-        _______,  KC_LCTL,  KC_LWIN,  KC_LALT,  MO(WIN_FN),         LT_SPC,                        LT_ENT,             KC_RALT,  MO(WIN_FN), KC_RCTL,  KC_LEFT,  KC_DOWN,  KC_RGHT),
+        _______,  KC_LCTL,  KC_LWIN,  KC_LALT,  MO(WIN_FN),         TD_SPC,                        LT_ENT,             KC_RALT,  MO(WIN_FN), KC_RCTL,  KC_LEFT,  KC_DOWN,  KC_RGHT),
 
     [WIN_FN] = LAYOUT_91_ansi(
         RM_TOGG,  _______,  KC_BRID,  KC_BRIU,  KC_TASK,  KC_FLXP,  RM_VALD,   RM_VALU,  KC_MPRV,  KC_MPLY,  KC_MNXT,  KC_MUTE,  KC_VOLD,    KC_VOLU,  _______,  _______,  RM_TOGG,
