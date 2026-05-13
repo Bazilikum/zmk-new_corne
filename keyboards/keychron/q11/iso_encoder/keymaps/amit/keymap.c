@@ -197,6 +197,34 @@ uint16_t get_quick_tap_term(uint16_t keycode, keyrecord_t *record) {
     }
 }
 
+// Dynamic RGB: SPLASH while typing, restore user's chosen pattern when idle.
+// The "idle" mode is whatever the user has set live in VIA / Keychron Launcher
+// -- this code only captures it at the moment typing starts and restores it
+// after RGB_IDLE_RESTORE_MS of inactivity.
+static uint8_t  rgb_saved_mode  = 0xFF;   // 0xFF means "nothing captured yet"
+static uint32_t rgb_last_key_ms = 0;
+
+bool process_record_user(uint16_t keycode, keyrecord_t *record) {
+    if (record->event.pressed) {
+        rgb_last_key_ms = timer_read32();
+        if (rgb_saved_mode == 0xFF) {
+            uint8_t cur = rgb_matrix_get_mode();
+            if (cur != RGB_MATRIX_SPLASH) {
+                rgb_saved_mode = cur;
+                rgb_matrix_mode_noeeprom(RGB_MATRIX_SPLASH);
+            }
+        }
+    }
+    return true;
+}
+
+void housekeeping_task_user(void) {
+    if (rgb_saved_mode != 0xFF && timer_elapsed32(rgb_last_key_ms) > RGB_IDLE_RESTORE_MS) {
+        rgb_matrix_mode_noeeprom(rgb_saved_mode);
+        rgb_saved_mode = 0xFF;
+    }
+}
+
 #if defined(ENCODER_MAP_ENABLE)
 const uint16_t PROGMEM encoder_map[][NUM_ENCODERS][NUM_DIRECTIONS] = {
     [MAC_BASE] = { ENCODER_CCW_CW(KC_VOLD, KC_VOLU), ENCODER_CCW_CW(KC_VOLD, KC_VOLU) },

@@ -26,3 +26,7 @@
 #define MOUSEKEY_WHEEL_INTERVAL 80
 #define MOUSEKEY_WHEEL_MAX_SPEED 8
 #define MOUSEKEY_WHEEL_TIME_TO_MAX 40
+
+// RGB: switch to SPLASH while typing, restore the user-selected pattern after
+// this many milliseconds of inactivity. 2500 = ~2.5s after the last keypress.
+#define RGB_IDLE_RESTORE_MS 2500
