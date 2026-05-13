@@ -1,19 +1,20 @@
-/* Q11 ANSI encoder — Amit's keymap, ported from Corne ZMK setup.
+/* Q11 ISO encoder — Amit's keymap, ported from Corne ZMK setup.
  *
  * Layers:
  *   0 MAC_BASE  QWERTY + HRMs on ASDF/JKL; + LT spaces
  *   1 MAC_FN    stock Mac Fn layer
  *   2 WIN_BASE  same as MAC_BASE with Win modifiers
  *   3 WIN_FN    stock Win Fn layer
- *   4 NAV       hold left space  — arrows on HJKL, mouse on YUIO, scroll, mouse buttons
+ *   4 NAV       hold left space  — mouse, arrows, Homerow, space/window nav
  *   5 NUM       hold right space — numpad on right hand
  *
- * Thumb chord:
- *   hold left space  + tap right space (which is on NAV layer) → TAB
- *   hold right space + tap left space  (which is on NUM layer) → TAB
+ * Left space is a tap-dance: tap = SPACE, hold = NAV, double-tap = Homerow Click.
+ * Right space is a layer-tap: tap = ENTER, hold = NUM.
  *
- * Per-key tapping terms (see get_tapping_term below) mirror the ZMK Corne:
- *   pinky 220ms · ring 210 · middle 200 · index 180
+ * ISO-specific:
+ *   Row 4 has KC_NUBS between LSHIFT and Z — bound to KC_GRV (backtick) so the
+ *   key prints `` ` `` (matching its likely keycap label) and AltTab's `⌥`` ` fires.
+ *   Row 3 has KC_NUHS between ' and Enter — bound to KC_BSLS for ANSI-style \\.
  */
 #include QMK_KEYBOARD_H
 
@@ -39,23 +40,18 @@ enum layers{
 #define HM_L LALT_T(KC_L)
 #define HM_SCLN RCTL_T(KC_SCLN)
 
-// Layer-tap thumbs
-#define LT_SPC LT(NAV, KC_SPC)
+// Right thumb is still a plain layer-tap.
 #define LT_ENT LT(NUM, KC_ENT)
 
 // Homerow.app triggers — match these to the shortcuts set in Homerow prefs.
-// Hyper combos (Ctrl+Alt+Cmd+<key>) are unlikely to clash with anything.
-#define HR_CLK LCAG(KC_J)  // Click   -- label every clickable element
-#define HR_SCR LCAG(KC_K)  // Scroll  -- keyboard-driven scrolling
-#define HR_SRC LCAG(KC_L)  // Search  -- click by visible text
+#define HR_CLK LCAG(KC_J)  // Click
+#define HR_SCR LCAG(KC_K)  // Scroll
+#define HR_SRC LCAG(KC_L)  // Search
 
 // Tap-dance on left space:
-//   single tap  -> SPACE
-//   hold        -> NAV layer
-//   double tap  -> Homerow Click (HR_CLK)
-// The single-tap fires immediately if interrupted by the next key press,
-// so mid-sentence typing is not delayed; only an isolated space at the
-// end of a burst waits ~tapping_term.
+//   tap        -> SPACE
+//   hold       -> NAV layer
+//   double tap -> Homerow Click
 enum custom_tap_dances {
     TD_SPC_HR,
 };
@@ -102,50 +98,49 @@ tap_dance_action_t tap_dance_actions[] = {
 
 #define TD_SPC TD(TD_SPC_HR)
 
-// CHORDAL_HOLD: which physical hand each key belongs to.
-// HRMs only trigger their hold when chorded with an opposite-hand key.
-// Thumbs and Fn keys are '*' so they chord with both hands — otherwise
-// rolling thumb -> same-hand finger fast would suppress layer activation.
-const char chordal_hold_layout[MATRIX_ROWS][MATRIX_COLS] PROGMEM = LAYOUT_91_ansi(
+// CHORDAL_HOLD: hand mapping per physical key.
+// Thumbs and Fn keys are '*' so layer activation works on fast same-hand rolls.
+// NUBS (left of Z) is left pinky 'L'. NUHS (right of ') is right pinky 'R'.
+const char chordal_hold_layout[MATRIX_ROWS][MATRIX_COLS] PROGMEM = LAYOUT_92_iso(
     'L', 'L', 'L', 'L', 'L', 'L', 'L',   'R', 'R', 'R', 'R', 'R', 'R', 'R', 'R', 'R', 'R',
     'L', 'L', 'L', 'L', 'L', 'L', 'L',   'R', 'R', 'R', 'R', 'R', 'R', 'R', 'R',      'R',
+    'L', 'L', 'L', 'L', 'L', 'L', 'L',   'R', 'R', 'R', 'R', 'R', 'R', 'R',           'R',
     'L', 'L', 'L', 'L', 'L', 'L', 'L',   'R', 'R', 'R', 'R', 'R', 'R', 'R', 'R',      'R',
-    'L', 'L', 'L', 'L', 'L', 'L', 'L',   'R', 'R', 'R', 'R', 'R', 'R',                'R',           'R',
-    'L', 'L',      'L', 'L', 'L', 'L',   'R', 'R', 'R', 'R', 'R', 'R',                'R',  'R',
-    'L', 'L', 'L', 'L', '*',      '*',         '*',                  'R', '*', 'R', 'R', 'R', 'R'
+    'L', 'L', 'L', 'L', 'L', 'L', 'L',   'R', 'R', 'R', 'R', 'R', 'R',                'R', 'R',
+    'L', 'L', 'L', 'L', '*',      '*',         '*',                  'R', '*', 'R',  'R', 'R', 'R'
 );
 
 const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
-    [MAC_BASE] = LAYOUT_91_ansi(
+    [MAC_BASE] = LAYOUT_92_iso(
         KC_MUTE,  KC_ESC,   KC_BRID,  KC_BRIU,  KC_MCTL,  KC_LPAD,  RM_VALD,   RM_VALU,  KC_MPRV,  KC_MPLY,  KC_MNXT,  KC_MUTE,  KC_VOLD,    KC_VOLU,  KC_INS,   KC_DEL,   KC_MUTE,
         _______,  KC_GRV,   KC_1,     KC_2,     KC_3,     KC_4,     KC_5,      KC_6,     KC_7,     KC_8,     KC_9,     KC_0,     KC_MINS,    KC_EQL,   KC_BSPC,            KC_PGUP,
-        _______,  KC_TAB,   KC_Q,     KC_W,     KC_E,     KC_R,     KC_T,      KC_Y,     KC_U,     KC_I,     KC_O,     KC_P,     KC_LBRC,    KC_RBRC,  KC_BSLS,            KC_PGDN,
-        _______,  KC_ESC,   HM_A,     HM_S,     HM_D,     HM_F,     KC_G,      KC_H,     HM_J,     HM_K,     HM_L,     HM_SCLN,  KC_QUOT,              KC_ENT,             KC_HOME,
-        _______,  KC_LSFT,            KC_Z,     KC_X,     KC_C,     KC_V,      KC_B,     KC_N,     KC_M,     KC_COMM,  KC_DOT,   KC_SLSH,              KC_RSFT,  KC_UP,
+        _______,  KC_TAB,   KC_Q,     KC_W,     KC_E,     KC_R,     KC_T,      KC_Y,     KC_U,     KC_I,     KC_O,     KC_P,     KC_LBRC,    KC_RBRC,                      KC_PGDN,
+        _______,  KC_ESC,   HM_A,     HM_S,     HM_D,     HM_F,     KC_G,      KC_H,     HM_J,     HM_K,     HM_L,     HM_SCLN,  KC_QUOT,    KC_BSLS,  KC_ENT,             KC_HOME,
+        _______,  KC_LSFT,  KC_GRV,   KC_Z,     KC_X,     KC_C,     KC_V,      KC_B,     KC_N,     KC_M,     KC_COMM,  KC_DOT,   KC_SLSH,              KC_RSFT,  KC_UP,
         _______,  KC_LCTL,  KC_LOPT,  KC_LCMD,  MO(MAC_FN),         TD_SPC,                        LT_ENT,             KC_RCMD,  MO(MAC_FN), KC_RCTL,  KC_LEFT,  KC_DOWN,  KC_RGHT),
 
-    [MAC_FN] = LAYOUT_91_ansi(
+    [MAC_FN] = LAYOUT_92_iso(
         RM_TOGG,  _______,  KC_F1,    KC_F2,    KC_F3,    KC_F4,    KC_F5,     KC_F6,    KC_F7,    KC_F8,    KC_F9,    KC_F10,   KC_F11,     KC_F12,   _______,  _______,  RM_TOGG,
         _______,  _______,  _______,  _______,  _______,  _______,  _______,   _______,  _______,  _______,  _______,  _______,  _______,    _______,  _______,            _______,
-        _______,  RM_TOGG,  RM_NEXT,  RM_VALU,  RM_HUEU,  RM_SATU,  RM_SPDU,   _______,  _______,  _______,  _______,  _______,  _______,    _______,  _______,            _______,
-        _______,  _______,  RM_PREV,  RM_VALD,  RM_HUED,  RM_SATD,  RM_SPDD,   _______,  _______,  _______,  _______,  _______,  _______,              _______,            _______,
-        _______,  _______,            _______,  _______,  _______,  _______,   _______,  NK_TOGG,  _______,  _______,  _______,  _______,              _______,  _______,
+        _______,  RM_TOGG,  RM_NEXT,  RM_VALU,  RM_HUEU,  RM_SATU,  RM_SPDU,   _______,  _______,  _______,  _______,  _______,  _______,    _______,                      _______,
+        _______,  _______,  RM_PREV,  RM_VALD,  RM_HUED,  RM_SATD,  RM_SPDD,   _______,  _______,  _______,  _______,  _______,  _______,    _______,  _______,            _______,
+        _______,  _______,  _______,  _______,  _______,  _______,  _______,   _______,  NK_TOGG,  _______,  _______,  _______,  _______,              _______,  _______,
         _______,  _______,  _______,  _______,  _______,            _______,                       _______,            _______,  _______,    _______,  _______,  _______,  _______),
 
-    [WIN_BASE] = LAYOUT_91_ansi(
+    [WIN_BASE] = LAYOUT_92_iso(
         KC_MUTE,  KC_ESC,   KC_F1,    KC_F2,    KC_F3,    KC_F4,    KC_F5,     KC_F6,    KC_F7,    KC_F8,    KC_F9,    KC_F10,   KC_F11,     KC_F12,   KC_INS,   KC_DEL,   KC_MUTE,
         _______,  KC_GRV,   KC_1,     KC_2,     KC_3,     KC_4,     KC_5,      KC_6,     KC_7,     KC_8,     KC_9,     KC_0,     KC_MINS,    KC_EQL,   KC_BSPC,            KC_PGUP,
-        _______,  KC_TAB,   KC_Q,     KC_W,     KC_E,     KC_R,     KC_T,      KC_Y,     KC_U,     KC_I,     KC_O,     KC_P,     KC_LBRC,    KC_RBRC,  KC_BSLS,            KC_PGDN,
-        _______,  KC_ESC,   HM_A,     HM_S,     HM_D,     HM_F,     KC_G,      KC_H,     HM_J,     HM_K,     HM_L,     HM_SCLN,  KC_QUOT,              KC_ENT,             KC_HOME,
-        _______,  KC_LSFT,            KC_Z,     KC_X,     KC_C,     KC_V,      KC_B,     KC_N,     KC_M,     KC_COMM,  KC_DOT,   KC_SLSH,              KC_RSFT,  KC_UP,
+        _______,  KC_TAB,   KC_Q,     KC_W,     KC_E,     KC_R,     KC_T,      KC_Y,     KC_U,     KC_I,     KC_O,     KC_P,     KC_LBRC,    KC_RBRC,                      KC_PGDN,
+        _______,  KC_ESC,   HM_A,     HM_S,     HM_D,     HM_F,     KC_G,      KC_H,     HM_J,     HM_K,     HM_L,     HM_SCLN,  KC_QUOT,    KC_BSLS,  KC_ENT,             KC_HOME,
+        _______,  KC_LSFT,  KC_GRV,   KC_Z,     KC_X,     KC_C,     KC_V,      KC_B,     KC_N,     KC_M,     KC_COMM,  KC_DOT,   KC_SLSH,              KC_RSFT,  KC_UP,
         _______,  KC_LCTL,  KC_LWIN,  KC_LALT,  MO(WIN_FN),         TD_SPC,                        LT_ENT,             KC_RALT,  MO(WIN_FN), KC_RCTL,  KC_LEFT,  KC_DOWN,  KC_RGHT),
 
-    [WIN_FN] = LAYOUT_91_ansi(
+    [WIN_FN] = LAYOUT_92_iso(
         RM_TOGG,  _______,  KC_BRID,  KC_BRIU,  KC_TASK,  KC_FLXP,  RM_VALD,   RM_VALU,  KC_MPRV,  KC_MPLY,  KC_MNXT,  KC_MUTE,  KC_VOLD,    KC_VOLU,  _______,  _______,  RM_TOGG,
         _______,  _______,  _______,  _______,  _______,  _______,  _______,   _______,  _______,  _______,  _______,  _______,  _______,    _______,  _______,            _______,
-        _______,  RM_TOGG,  RM_NEXT,  RM_VALU,  RM_HUEU,  RM_SATU,  RM_SPDU,   _______,  _______,  _______,  _______,  _______,  _______,    _______,  _______,            _______,
-        _______,  _______,  RM_PREV,  RM_VALD,  RM_HUED,  RM_SATD,  RM_SPDD,   _______,  _______,  _______,  _______,  _______,  _______,              _______,            _______,
-        _______,  _______,            _______,  _______,  _______,  _______,   _______,  NK_TOGG,  _______,  _______,  _______,  _______,              _______,  _______,
+        _______,  RM_TOGG,  RM_NEXT,  RM_VALU,  RM_HUEU,  RM_SATU,  RM_SPDU,   _______,  _______,  _______,  _______,  _______,  _______,    _______,                      _______,
+        _______,  _______,  RM_PREV,  RM_VALD,  RM_HUED,  RM_SATD,  RM_SPDD,   _______,  _______,  _______,  _______,  _______,  _______,    _______,  _______,            _______,
+        _______,  _______,  _______,  _______,  _______,  _______,  _______,   _______,  NK_TOGG,  _______,  _______,  _______,  _______,              _______,  _______,
         _______,  _______,  _______,  _______,  _______,            _______,                       _______,            _______,  _______,    _______,  _______,  _______,  _______),
 
     // hold LEFT space → nav + mouse + Homerow
@@ -155,21 +150,21 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
     // HJKL: arrow keys
     // Z/C: MS_ACL0 (precision) / MS_ACL2 (jump fast)
     // NM,.: mouse movement
-    [NAV] = LAYOUT_91_ansi(
+    [NAV] = LAYOUT_92_iso(
         _______,  _______,  _______,  _______,  _______,  _______,  _______,   _______,  _______,  _______,  _______,  _______,  _______,    _______,  _______,  _______,  _______,
         _______,  _______,  LCTL(KC_LEFT), LCTL(KC_RIGHT), LCTL(KC_UP), LCTL(KC_DOWN), LGUI(KC_GRV),   _______,  _______,  _______,  _______,  _______,  _______,    _______,  _______,            _______,
-        _______,  _______,  HR_CLK,   HR_SCR,   HR_SRC,   _______,  _______,   MS_BTN1,  MS_BTN3,  MS_BTN2,  MS_WHLU,  MS_WHLD,  _______,    _______,  _______,            _______,
-        _______,  _______,  _______,  _______,  _______,  _______,  _______,   KC_LEFT,  KC_DOWN,  KC_UP,    KC_RGHT,  KC_TAB,   _______,              _______,            _______,
-        _______,  _______,            MS_ACL0,  _______,  MS_ACL2,  _______,   _______,  MS_LEFT,  MS_DOWN,  MS_UP,    MS_RGHT,  _______,              _______,  _______,
+        _______,  _______,  HR_CLK,   HR_SCR,   HR_SRC,   _______,  _______,   MS_BTN1,  MS_BTN3,  MS_BTN2,  MS_WHLU,  MS_WHLD,  _______,    _______,                      _______,
+        _______,  _______,  _______,  _______,  _______,  _______,  _______,   KC_LEFT,  KC_DOWN,  KC_UP,    KC_RGHT,  KC_TAB,   _______,    _______,  _______,            _______,
+        _______,  _______,  _______,  MS_ACL0,  _______,  MS_ACL2,  _______,   _______,  MS_LEFT,  MS_DOWN,  MS_UP,    MS_RGHT,  _______,              _______,  _______,
         _______,  _______,  _______,  _______,  _______,            _______,                       KC_TAB,             _______,  _______,    _______,  _______,  _______,  _______),
 
     // hold RIGHT space → numpad on right hand
-    [NUM] = LAYOUT_91_ansi(
+    [NUM] = LAYOUT_92_iso(
         _______,  _______,  _______,  _______,  _______,  _______,  _______,   _______,  _______,  _______,  _______,  _______,  _______,    _______,  _______,  _______,  _______,
         _______,  _______,  _______,  _______,  _______,  _______,  _______,   _______,  _______,  _______,  _______,  _______,  _______,    _______,  _______,            _______,
-        _______,  _______,  _______,  _______,  _______,  _______,  _______,   _______,  KC_7,     KC_8,     KC_9,     KC_MINS,  _______,    _______,  _______,            _______,
-        _______,  _______,  _______,  _______,  _______,  _______,  _______,   _______,  KC_4,     KC_5,     KC_6,     KC_0,     KC_EQL,               _______,            _______,
-        _______,  _______,            _______,  _______,  _______,  _______,   _______,  KC_1,     KC_2,     KC_3,     KC_DOT,   _______,              _______,  _______,
+        _______,  _______,  _______,  _______,  _______,  _______,  _______,   _______,  KC_7,     KC_8,     KC_9,     KC_MINS,  _______,    _______,                      _______,
+        _______,  _______,  _______,  _______,  _______,  _______,  _______,   _______,  KC_4,     KC_5,     KC_6,     KC_0,     KC_EQL,     _______,  _______,            _______,
+        _______,  _______,  _______,  _______,  _______,  _______,  _______,   _______,  KC_1,     KC_2,     KC_3,     KC_DOT,   _______,              _______,  _______,
         _______,  _______,  _______,  _______,  _______,            KC_TAB,                        _______,            _______,  _______,    _______,  _______,  _______,  _______),
 };
 

@@ -1,6 +1,6 @@
 {
     "userspace_version": "1.0",
     "build_targets": [
-        ["keychron/q11/ansi_encoder", "amit"]
+        ["keychron/q11/iso_encoder", "amit"]
     ]
 }
