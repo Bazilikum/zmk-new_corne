@@ -30,3 +30,7 @@
 // RGB: switch to SPLASH while typing, restore the user-selected pattern after
 // this many milliseconds of inactivity. 2500 = ~2.5s after the last keypress.
 #define RGB_IDLE_RESTORE_MS 2500
+
+// Auto-off after 5 minutes of total inactivity. Wakes on any key press.
+// 300000 ms = 5 min. Lower for sooner sleep.
+#define RGB_MATRIX_TIMEOUT 300000
